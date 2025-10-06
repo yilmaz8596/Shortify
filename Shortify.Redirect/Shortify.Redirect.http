@@ -1,0 +1,6 @@
+@Shortify.Redirect_HostAddress = http://localhost:5114
+
+GET {{Shortify.Redirect_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
