@@ -1,0 +1,60 @@
+﻿@model RegisterVM
+
+@{
+    ViewData["Title"] = "Register";
+    ViewData["HideFooter"] = true;
+    ViewData["AuthPage"] = true;
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="card shadow-sm">   
+            <div class="card-body p-4">
+                <h3 class="card-title mb-3 text-center">Create an account</h3>
+                <p class="text-muted text-center mb-4">Sign up to start shortening and tracking your links</p>
+
+                <form asp-controller="Authentication" asp-action="RegisterSubmitted" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" for="name" class="form-label">Full name</label>
+                        <input asp-for="FullName" type="text" class="form-control" id="name" name="FullName" placeholder="John Doe" required />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" for="email" class="form-label">Email</label>
+                        <input asp-for="Email" type="text" class="form-control" id="email" name="Email" placeholder="you@example.com" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" for="password" class="form-label">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" id="password" name="Password" placeholder="Create a password" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" placeholder="Confirm your password" required />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-primary-orange btn-lg">Create account</button>
+                    </div>
+
+                    <div class="text-center">
+                        <small class="text-muted">Already have an account? <a asp-controller="Authentication" asp-action="Login">Sign in</a></small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

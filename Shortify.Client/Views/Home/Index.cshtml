@@ -1,8 +1,205 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model PostUrlVM;
+
+@{
+    ViewData["Title"] = "Shortify - URL Shortener";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@{
+    if(TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    if(TempData["EmailConfirmation"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["EmailConfirmation"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+}
+
+<!-- Hero Section -->
+<section class="hero-section py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold mb-4">Shorten. Share. Track.</h1>
+                <p class="lead mb-4 fs-5">Transform long URLs into short, branded links with powerful analytics. Perfect for social media, marketing campaigns, and professional use.</p>
+                <div class="d-flex gap-3 mb-4">
+                    <a href="#shorten-section" class="btn btn-hero-primary btn-lg px-4 py-3">Get Started Free</a>
+                    <a href="#features" class="btn btn-hero-outline btn-lg px-4 py-3">Learn More</a>
+                </div>
+                <div class="d-flex align-items-center gap-4 hero-features">
+                    <small><i class="fas fa-check me-2"></i>No registration required</small>
+                    <small><i class="fas fa-check me-2"></i>Unlimited links</small>
+                    <small><i class="fas fa-check me-2"></i>Analytics included</small>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="~/img/welcome-img.png" alt="URL Shortener Illustration" class="img-fluid hero-image" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- URL Shortening Section -->
+<section class="shorten-section py-5 bg-light" id="shorten-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5">
+                    <h2 class="h1 mb-3">Shorten Your URL</h2>
+                    <p class="text-muted">Paste your long URL below and get a shortened link instantly</p>
+                </div>
+                
+                <div class="card shadow-lg border-0 shorten-card">
+                    <div class="card-body p-4">
+                        <form class="url-shorten-form" id="url-shorten-form" method="post" asp-controller="Home" asp-action="ShortenUrl">
+                            <div class="input-group input-group-lg mb-3">
+                                <input type="text" 
+                                    class="form-control" 
+                                    placeholder="https://example.com/your-long-url-here" 
+                                    asp-for="Url"
+                                    aria-label="Enter URL to shorten" 
+                                    autocomplete="off"
+                                    required>
+                                <button class="btn btn-primary-orange px-4" type="submit" id="button-shorten">
+                                    <i class="fas fa-magic me-2"></i>Shorten It!
+                                </button>
+                            </div>
+                        </form>
+                        <span asp-validation-for="Url" class="text-danger"></span>
+                        <div class="url-shorten-results mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features py-5" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="h1 mb-3">Why Choose Shortify?</h2>
+            <p class="text-muted lead">Powerful features to help you manage and track your links</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4 feature-card">
+                    <div class="card-body">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-link fa-3x text-primary-orange"></i>
+                        </div>
+                        <h5 class="card-title">Easy Link Shortening</h5>
+                        <p class="card-text text-muted">Convert long URLs into short, memorable links in seconds. No account required.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4 feature-card">
+                    <div class="card-body">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-chart-bar fa-3x text-primary-orange"></i>
+                        </div>
+                        <h5 class="card-title">Detailed Analytics</h5>
+                        <p class="card-text text-muted">Track clicks, geographic data, and referral sources to understand your audience.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4 feature-card">
+                    <div class="card-body">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-shield-alt fa-3x text-primary-orange"></i>
+                        </div>
+                        <h5 class="card-title">Safe & Reliable</h5>
+                        <p class="card-text text-muted">Your links are secure and guaranteed to work. 99.9% uptime with fast redirects.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-5" id="stats">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4 mb-md-0">
+                <h3 class="display-4 fw-bold mb-2 stats-number">1M+</h3>
+                <p class="mb-0">Links Shortened</p>
+            </div>
+            <div class="col-md-3 col-6 mb-4 mb-md-0">
+                <h3 class="display-4 fw-bold mb-2 stats-number">50K+</h3>
+                <p class="mb-0">Active Users</p>
+            </div>
+            <div class="col-md-3 col-6 mb-4 mb-md-0">
+                <h3 class="display-4 fw-bold mb-2 stats-number">99.9%</h3>
+                <p class="mb-0">Uptime</p>
+            </div>
+            <div class="col-md-3 col-6 mb-4 mb-md-0">
+                <h3 class="display-4 fw-bold mb-2 stats-number">24/7</h3>
+                <p class="mb-0">Support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="h1 mb-3">How It Works</h2>
+            <p class="text-muted lead">Simple steps to shorten and share your links</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <div class="step-number mb-3">
+                    <span class="fw-bold">1</span>
+                </div>
+                <h5>Paste Your URL</h5>
+                <p class="text-muted">Copy and paste your long URL into our shortening tool above.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="step-number mb-3">
+                    <span class="fw-bold">2</span>
+                </div>
+                <h5>Get Short Link</h5>
+                <p class="text-muted">Receive your shortened URL instantly and copy it to your clipboard.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="step-number mb-3">
+                    <span class="fw-bold">3</span>
+                </div>
+                <h5>Share & Track</h5>
+                <p class="text-muted">Share your link anywhere and track its performance with detailed analytics.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5 bg-light">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="h1 mb-4">Ready to Shorten Your First Link?</h2>
+                <p class="lead text-muted mb-4">Join thousands of users who trust Shortify for their URL shortening needs.</p>
+                <a href="#shorten-section" class="btn btn-primary-orange btn-lg px-5 py-3 cta-button mb-2">
+                    <i class="fas fa-rocket me-2"></i>Start Shortening Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

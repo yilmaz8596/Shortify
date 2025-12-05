@@ -1,0 +1,65 @@
+﻿<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary-orange" asp-area="" asp-controller="Home" asp-action="Index">
+            <i class="fas fa-link me-2"></i>Shortify
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Url" asp-action="Index">
+                            <i class="fas fa-star me-1"></i>All Links
+                        </a>
+                    </li>
+                }
+                @* Only show Users menu to admins *@
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Authentication" asp-action="Users">
+                            <i class="fas fa-users me-1"></i>Users
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link me-2" id="loginBtn" asp-controller="Authentication" asp-action="Login">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    <a class="btn btn-primary-orange btn-sm align-content-center" id="registerBtn" asp-controller="Authentication" asp-action="Register">
+                        <i class="fas fa-user-plus me-1"></i>Register
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="navbar-nav ms-auto d-flex align-items-center gap-2">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span class="badge bg-danger">Admin</span>
+                    }
+                    <form asp-controller="Authentication" asp-action="Logout" class="m-0">
+                        <button class="btn btn-danger btn-sm">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout <b>@User.Identity.Name</b>
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</nav>

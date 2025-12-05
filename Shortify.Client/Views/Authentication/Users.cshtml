@@ -1,0 +1,168 @@
+﻿@model List<Shortify.Data.Models.AppUser>;
+
+@{
+    ViewData["Title"] = "Users Management";
+}
+
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="mb-3 mb-md-0">
+                    <h1 class="display-5 display-md-4 fw-bold text-primary-orange mb-2">
+                        <i class="fas fa-users me-3"></i>Users Management
+                    </h1>
+                    <p class="text-muted mb-0">Manage and monitor all users in the system</p>
+                </div>
+                <div>
+                    <div class="badge bg-light text-dark fs-6 px-3 py-2 border border-2 border-warning shadow-sm">
+                        <i class="fas fa-user-circle me-2 text-primary-orange"></i>
+                        <strong>@Model.Count</strong> Total Users
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <!-- Users Grid -->
+        <div class="row g-4">
+            @foreach (var user in Model)
+            {
+                var linksCount = user.Urls?.Count ?? 0;
+                var totalClicks = (user.Urls != null && user.Urls.Any()) ? user.Urls.Sum(u => u.ClickCount) : 0;
+
+                <div class="col-lg-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 rounded-3 overflow-hidden">
+                        <!-- Card Header with User Info -->
+                        <div class="card-header text-white border-0 py-3" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3 opacity-75">
+                                    <i class="fas fa-user-circle fa-3x"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1 fw-bold">@(user.FullName ?? "Anonymous User")</h5>
+                                    <p class="mb-0 small opacity-90">
+                                        <i class="fas fa-envelope me-1"></i>@user.Email
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body with Stats -->
+                        <div class="card-body">
+                            <!-- Statistics Row -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="text-center p-3 bg-light rounded border border-2 border-transparent">
+                                        <div class="mb-2">
+                                            <i class="fas fa-link text-primary-orange fs-4"></i>
+                                        </div>
+                                        <h4 class="mb-0 fw-bold text-primary-orange fs-5 fs-md-4">@linksCount</h4>
+                                        <small class="text-muted">Links Created</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center p-3 bg-light rounded border border-2 border-transparent">
+                                        <div class="mb-2">
+                                            <i class="fas fa-mouse-pointer text-primary-orange fs-4"></i>
+                                        </div>
+                                        <h4 class="mb-0 fw-bold text-primary-orange fs-5 fs-md-4">@totalClicks</h4>
+                                        <small class="text-muted">Total Clicks</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (user.Urls != null && user.Urls.Any())
+                            {
+                                <!-- Recent Links Section -->
+                                <div class="mb-3">
+                                    <h6 class="mb-3 fw-bold text-dark">
+                                        <i class="fas fa-history me-2 text-primary-orange"></i>Recent Links
+                                    </h6>
+                                    <div class="list-group list-group-flush">
+                                        @foreach (var url in user.Urls.OrderByDescending(u => u.CreatedAt).Take(3))
+                                        {
+                                            <div class="list-group-item px-0 py-2 border-0 bg-transparent">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div class="flex-grow-1 me-2 text-break">
+                                                        <a href="@url.ShortenedUrl" target="_blank" class="text-decoration-none fw-semibold text-primary-orange d-block mb-1 small">
+                                                            <i class="fas fa-external-link-alt me-1"></i>
+                                                            @url.ShortenedUrl
+                                                        </a>
+                                                        <small class="text-muted d-block text-truncate" style="max-width: 250px;" title="@url.OriginalUrl">
+                                                            @url.OriginalUrl
+                                                        </small>
+                                                    </div>
+                                                    <span class="badge rounded-pill text-white flex-shrink-0" style="background-color: #f59e0b; font-weight: 600; padding: 0.35rem 0.65rem;">
+                                                        @url.ClickCount
+                                                        <i class="fas fa-chart-line ms-1"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    
+                                    @if (linksCount > 3)
+                                    {
+                                        <div class="text-center mt-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-plus-circle me-1"></i>
+                                                And @(linksCount - 3) more link(s)
+                                            </small>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4 bg-light rounded">
+                                    <i class="fas fa-inbox fa-2x text-muted mb-2 opacity-50"></i>
+                                    <p class="text-muted mb-0 small">No links created yet</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Card Footer with Action Buttons -->
+                        <div class="card-footer bg-white border-0 pt-0 pb-3">
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Url" asp-action="Index" asp-route-userId="@user.Id" 
+                                   class="btn btn-primary-orange btn-sm">
+                                    <i class="fas fa-link me-2"></i>View All Links (@linksCount)
+                                </a>
+                                @* Uncomment if you have a user details page
+                                <a asp-controller="Authentication" asp-action="Details" asp-route-id="@user.Id" 
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-info-circle me-2"></i>User Details
+                                </a>
+                                *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Empty State -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm text-center py-5 rounded-3" style="background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <i class="fas fa-users text-primary-orange opacity-50" style="font-size: 5rem;"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark mb-3">No Users Found</h3>
+                        <p class="text-muted mb-4">There are no registered users in the system yet.</p>
+                        <a asp-controller="Authentication" asp-action="Register" class="btn btn-primary-orange btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Register First User
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

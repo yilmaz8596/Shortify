@@ -1,0 +1,117 @@
+@model Confirm2FALoginVm;
+
+@{
+    ViewData["Title"] = "Two-Factor Authentication";
+    ViewData["HideFooter"] = true;
+    ViewData["AuthPage"] = true;
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="container" style="position: fixed; top: 100px; left: 50%; transform: translateX(-50%); z-index: 1050; max-width: 600px;">    
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["Info"] != null)
+{
+    <div class="container" style="position: fixed; top: 100px; left: 50%; transform: translateX(-50%); z-index: 1050; max-width: 600px;">    
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @TempData["Info"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <i class="fas fa-envelope-open-text fa-3x text-primary-orange mb-3"></i>
+                    <h3 class="card-title mb-3">Two-Factor Authentication</h3>
+                    <p class="text-muted">Enter the verification code sent to your email address</p>
+                    <small class="text-muted d-block mt-2">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Please check your inbox (and spam folder)
+                    </small>
+                </div>
+
+                <form asp-controller="Authentication" asp-action="Confirm2FALogin" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <input type="hidden" asp-for="UserId" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label for="userConfirmationCode" class="form-label">
+                            <i class="fas fa-key me-2"></i>Verification Code
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg text-center" 
+                               id="userConfirmationCode" 
+                               name="UserConfirmationCode" 
+                               placeholder="Enter 6-digit code" 
+                               asp-for="UserConfirmationCode"
+                               maxlength="6"
+                               pattern="[0-9]{6}"
+                               autocomplete="off"
+                               required
+                               style="letter-spacing: 0.5em; font-size: 1.5rem;" />
+                        <span asp-validation-for="UserConfirmationCode" class="text-danger"></span>
+                        <small class="form-text text-muted d-block mt-2">
+                            Code expires in 5 minutes
+                        </small>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary-orange btn-lg">
+                            <i class="fas fa-check me-2"></i>Verify Code
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <small class="text-muted">
+                            Didn't receive the email? 
+                            <a asp-controller="Authentication" asp-action="TwoFactorConfirmation" asp-route-loggedInUserId="@Model.UserId" class="text-primary-orange">Resend Code</a>
+                        </small>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <a asp-controller="Authentication" asp-action="Login">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Login
+                            </a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Auto-focus on the input field
+        document.getElementById('userConfirmationCode').focus();
+        
+        // Only allow numeric input
+        document.getElementById('userConfirmationCode').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        // Auto-submit when 6 digits are entered (optional enhancement)
+        document.getElementById('userConfirmationCode').addEventListener('input', function(e) {
+            if (this.value.length === 6) {
+                // Optional: Auto-submit after a brief delay
+                // setTimeout(() => this.form.submit(), 500);
+            }
+        });
+    </script>
+}

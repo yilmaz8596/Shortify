@@ -1,0 +1,49 @@
+﻿@model ConfirmEmailLoginVM;
+
+@{
+    ViewData["Title"] = "Confirm your account";
+    ViewData["HideFooter"] = true;
+    ViewData["AuthPage"] = true;
+}
+
+@if (TempData["EmailConfirmation"] != null)
+{
+    <div class="container" style="position: fixed; top: 100px; left: 50%; transform: translateX(-50%); z-index: 1050; max-width: 600px;">    
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["EmailConfirmation"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="card-title mb-3 text-center">Welcome back</h3>
+                <p class="text-muted text-center mb-4">Confirm your account</p>
+
+                <form asp-controller="Authentication" asp-action="SendEmailConfirmation" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" class="form-control" id="email" name="Email" placeholder="you@example.com" asp-for="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-primary-orange btn-lg">Send confirmation email</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
